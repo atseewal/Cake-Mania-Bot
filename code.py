@@ -25,6 +25,7 @@ from PIL import ImageGrab
 import os
 import time
 import win32api, win32con
+from win32gui import GetWindowText, GetForegroundWindow
 
 def ScreenGrab():
     box = (x_pad, y_pad, x_pad+998, y_pad+750)
@@ -32,19 +33,51 @@ def ScreenGrab():
     im.save(os.getcwd() + '\\full_snap__' + str(int(time.time())) + '.png', 'PNG')
 
 def leftClick():
+    # Cake Mania Pauses when it is not the active window
+    # Check to see if an activation click is required
+    if GetWindowText(GetForegroundWindow()) != 'CakeMania':
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
+        time.sleep(.1)
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
+        time.sleep(.1)
+        print('activating CakeMania window')
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
     time.sleep(.1)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
     print('left click')
 
 def mousePos(cord):
-    win32api.SetCursorPos(x_pad + cord[0], y_pad + cord[1])
+    win32api.SetCursorPos((x_pad + cord[0], y_pad + cord[1]))
 
 def get_cords():
     x, y = win32api.GetCursorPos()
     x = x - x_pad
     y = y - y_pad
     print(x, y)
+
+def startGame():
+    # Press Play
+    mousePos((237, 228))
+    leftClick()
+    time.sleep(.1)
+    
+    # Click Start New Game
+    mousePos((226, 277))
+    leftClick()
+    time.sleep(.1)
+    
+    # Click through intro pages
+    mousePos((755, 568))
+    leftClick()
+    time.sleep(.1)
+    leftClick()
+    time.sleep(.1)
+    leftClick()
+    
+# Unused, created to get the name of the CakeMania window
+def getWindowName():
+    time.sleep(3)
+    print(GetWindowText(GetForegroundWindow()))
 
 def main():
     pass
